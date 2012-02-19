@@ -1,0 +1,9 @@
+out
+target
+.idea
+.classpath
+*.iml
+.project
+.settings
+*.log
+./grails-app/conf/external-config.properties
