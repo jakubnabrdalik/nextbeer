@@ -19,7 +19,7 @@ Aplikację, która obsłuży smsa ślicznej brunetki, napiszemy my. Będzie podp
 # Projekt wstępny
 
 
-Koncepcja jest prosta: odbieramy smsa, wyciągamy loOverviewSequenceDiagramkalizację użytkownika (nie potrzebny GPS, sieć poda nam ją na podstawie odległości od masztów i takie przybliżenie nam wystarczy), pytamy Google o pobliskie puby, ich numery telefonów i adresy, wysyłamy to wszystko z powrotem do użytkownika smsem.
+Koncepcja jest prosta: odbieramy smsa, wyciągamy lokalizację użytkownika (nie potrzebny GPS, sieć poda nam ją na podstawie odległości od masztów i takie przybliżenie nam wystarczy), pytamy Google o pobliskie puby, ich numery telefonów i adresy, wysyłamy to wszystko z powrotem do użytkownika smsem.
 
 
 Do rozmawiania z siecią GSM użyjemy Open API. Do rozmawiania z Googlem, wykorzystamy Google Places Api (http://code.google.com/apis/maps/documentation/places/).
@@ -198,7 +198,7 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/OpenAP
 Skoro już załatwiliśmy sprawę Open API, napiszmy w końcu sam kontroler.
 
 
-Jego zadaniem jest nadzorowanie całej operacji, zatem odbierze smsa i sprawdzi uprawnienia. Jeśli je mamy, przekarze sterowanie klasie odpowiedzialnej za sugerowanie następnego pubu (nazwiemy ją SmsAdvisor), a jeśli nie, poprosi Open API o nie i zaplanoje uruchomienie zadania w Quartzu. Uruchamianie zadań w Quartzu wygląda na odpowiedzialność innego obiektu, więc stworzymy do tego celu osobną klasę: SmsJobPlanner.
+Jego zadaniem jest nadzorowanie całej operacji, zatem odbierze smsa i sprawdzi uprawnienia. Jeśli je mamy, przekaże sterowanie klasie odpowiedzialnej za sugerowanie następnego pubu (nazwiemy ją SmsAdvisor), a jeśli nie, poprosi Open API uprawnienie i zaplanuje uruchomienie zadania w Quartzu. Uruchamianie zadań w Quartzu wygląda na odpowiedzialność innego obiektu, więc stworzymy do tego celu osobną klasę: SmsJobPlanner.
 
 
 https://github.com/jakubnabrdalik/nextbeer/blob/master/grails-app/controllers/nextbeer/OpenAPIController.groovy
