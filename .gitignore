@@ -6,4 +6,4 @@ target
 .project
 .settings
 *.log
-./grails-app/conf/external-config.properties
+grails-app/conf/external-config.properties
