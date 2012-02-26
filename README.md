@@ -93,7 +93,9 @@ Plik nazywam external-config, ponieważ jest to jedyna rzecz, której nie umiesz
 
 
 Pozostało jedynie sprawić by plik ten był wczytywany przy starcie aplikacji, co robimy dodając do grails-app/conf/Config.groovy linijkę
-grails.config.locations = [ "classpath:external-config.properties"]
+
+        grails.config.locations = [ "classpath:external-config.properties"]
+
 Pliki w katalogu conf są automatycznie dodawane do classpath.
 
 
@@ -142,7 +144,7 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/OpenA
 
 
 Tak stworzony mock, możemy podać do kontrolera w teście, ale ze względów oszczędnościowych przyda nam się także podczas developmentu, więc zadeklarujemy go sobie w profilu „test” kontekstu Springowego. By to zrobić, do pliku  grails-app/conf/spring/resources.groovy dodajemy:
-
+zrobił  pobieżne review
 
         if (GrailsUtil.environment == "test") {
                 OpenAPIFacade(OpenAPIFacadeMock, 4) {}
@@ -159,6 +161,7 @@ Brakuje nam jeszcze prawdziwej implementacji, która będzie wykorzystana w śro
 
 
 W efekcie powstaje nam klasa o takim wyglądzie:
+
 https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/OpenAPI/OpenAPIFacadeImpl.groovy
 
 
@@ -253,12 +256,12 @@ Pozostał nam już tylko zadanie odwleczone w czasie, czyli reakcja na brak upra
 https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/SmsJobPlanner.groovy
 
 
-Trzeba to jeszcze wszystko spiąć kontekstem springowym, dodając do  grails-app/conf/spring/resources.groovy kolejne obiekty
+Trzeba to jeszcze wszystko spiąć kontekstem springowym, dodając do grails-app/conf/spring/resources.groovy kolejne obiekty
 
 
-googlePlacesFacade(GooglePlacesFacade, application.config.google.places.api.key) {}
-smsAdvisor(SmsAdvisor, OpenAPIFacade, googlePlacesFacade) {}
-smsJobPlanner(SmsJobPlanner, OpenAPIFacade, ref("quartzScheduler"), smsAdvisor) {}
+        googlePlacesFacade(GooglePlacesFacade, application.config.google.places.api.key) {}
+        smsAdvisor(SmsAdvisor, OpenAPIFacade, googlePlacesFacade) {}
+        smsJobPlanner(SmsJobPlanner, OpenAPIFacade, ref("quartzScheduler"), smsAdvisor) {}
 
 
 I gotowe.
