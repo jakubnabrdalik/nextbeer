@@ -19,7 +19,7 @@ Aplikację, która obsłuży smsa ślicznej brunetki, napiszemy my. Będzie podp
 # Projekt wstępny
 
 
-Koncepcja jest prosta: odbieramy smsa, wyciągamy lokalizację użytkownika (nie potrzebny GPS, sieć poda nam ją na podstawie odległości od masztów i takie przybliżenie nam wystarczy), pytamy Google o pobliskie puby, ich numery telefonów i adresy, wysyłamy to wszystko z powrotem do użytkownika smsem.
+Koncepcja jest prosta: odbieramy smsa, wyciągamy loOverviewSequenceDiagramkalizację użytkownika (nie potrzebny GPS, sieć poda nam ją na podstawie odległości od masztów i takie przybliżenie nam wystarczy), pytamy Google o pobliskie puby, ich numery telefonów i adresy, wysyłamy to wszystko z powrotem do użytkownika smsem.
 
 
 Do rozmawiania z siecią GSM użyjemy Open API. Do rozmawiania z Googlem, wykorzystamy Google Places Api (http://code.google.com/apis/maps/documentation/places/).
@@ -34,7 +34,7 @@ Rzeczy na które musimy zwrócić szczególną uwagę w przypadku tych serwisów
 
 Jeden obrazek wart jest tysiąc słów, zatem oto uproszczony diagram sekwencji, dla naszej aplikacji:
 
-![OverviewSequenceDiagram](https://github.com/jakubnabrdalik/nextbeer/blob/master/docs/OverviewSequenceDiagram.png)
+![OverviewSequenceDiagram](https://github.com/jakubnabrdalik/nextbeer/raw/master/docs/OverviewSequenceDiagram.png)
 
 
 Wygląda prosto, prawda? I dokładnie tak jest. Przejdźmy zatem do działania.
@@ -79,7 +79,7 @@ Całą uzyskaną konfigurację zapisujemy w pliku grails-app/conf/external-confi
         google.places.api.key=bardzolosowyklucz
         OpenAPI.key=jeszczebardziejlosowyklucz
         OpenAPI.testNumber=4899999999
-        OpenAPI.url=http://jakisurl/core/api/
+        OpenAPI.url=http://jakisurl/core/api/OverviewSequenceDiagram
 
 
 Poza dwoma kluczami przyda nam się numer do testów pół-automatycznych (OpenAPI.testNumber),  i należy tam wpisać numer własnej komórki.
