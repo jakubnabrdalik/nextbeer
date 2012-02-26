@@ -1,7 +1,7 @@
 package nextbeer.openApi
 
 class OpenApiFacadeMock implements OpenApiFacade {
-    private int hasPermissionCall = 2
+    private int hasPermissionCall = 0
     private int whichCallToHasPermissionShouldReturnTrue
     List<String> calls = []
 

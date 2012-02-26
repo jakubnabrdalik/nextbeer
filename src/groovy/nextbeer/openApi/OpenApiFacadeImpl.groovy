@@ -47,7 +47,7 @@ class OpenApiFacadeImpl implements OpenApiFacade{
 
     @PackageScope Location getLocation(NodeChild data) {
         def latitude = data.depthFirst().find() {it.name() == "lat"}.text()
-        def longitude = data.depthFirst().find { it.name() == "lon"}
+        def longitude = data.depthFirst().find() {it.name() == "lon"}.text()
         return new Location(latitude: latitude, longitude: longitude)
     }
 
