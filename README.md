@@ -26,10 +26,11 @@ Do rozmawiania z siecią GSM użyjemy Open API. Do rozmawiania z Googlem, wykorz
 
 
 Rzeczy na które musimy zwrócić szczególną uwagę w przypadku tych serwisów to:
-* aby pobrać lokalizację użytkownika, trzeba dostać od niego pozwolenie,
-* proszenie o pozwolenie jest asynchroniczne, tzn. my wysyłamy prośbę, sieć po jakimś czasie dostarczy użytkownikowi smsa z pytaniem, użytkownik odpowie lub nie,
-* z powyższych dwóch uwag wynika, że powinniśmy odpytywać sieć o pozwolenie co jakiś czas z sensownym limitem prób,
-* żeby wyciągnąć numery telefonów pobliskich pubów z Google'a, będziemy musieli zapytać raz o listę pubów w pobliżu, a następnie tyle razy ile miejsc dostaniemy, o ich szczegóły – warto ten fragment zrównoleglić.
+
+*       aby pobrać lokalizację użytkownika, trzeba dostać od niego pozwolenie,
+*       proszenie o pozwolenie jest asynchroniczne, tzn. my wysyłamy prośbę, sieć po jakimś czasie dostarczy użytkownikowi smsa z pytaniem, użytkownik odpowie lub nie,
+*       z powyższych dwóch uwag wynika, że powinniśmy odpytywać sieć o pozwolenie co jakiś czas z sensownym limitem prób,
+*       żeby wyciągnąć numery telefonów pobliskich pubów z Google'a, będziemy musieli zapytać raz o listę pubów w pobliżu, a następnie tyle razy ile miejsc dostaniemy, o ich szczegóły – warto ten fragment zrównoleglić.
 
 
 Jeden obrazek wart jest tysiąc słów, zatem oto uproszczony diagram sekwencji, dla naszej aplikacji:
