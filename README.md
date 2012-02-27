@@ -120,7 +120,7 @@ Założymy też, że użytkownik może w smsie podać promień, w jakim interesu
 Nasz test wygląda zatem tak:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/openapiControllerTests.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/OpenapiControllerTests.groovy
 
 
 W rzeczywistości będziemy się odpytywać Open API o pozwolenie użytkownika pięć razy co trzydzieści sekund, ale ponieważ taki test trwałby bardzo długo, parametryzujemy ten czas i ustawiamy w teście na sekundę. Test nadal będzie się wykonywał długo, ale jako że jest to jedyny  test akceptacyjny w naszej małej aplikacji, możemy sobie na to pozwolić. W przypadku większej aplikacji, powinniśmy ustalić sztuczną jednostkę czasu na potrzeby testu, by mieć go w pełni pod kontrolą. Test jest dość słaby (nie walidujemy wysyłanego smsa), ale na początek wystarczy.
@@ -204,7 +204,7 @@ Skoro już załatwiliśmy sprawę Open API, napiszmy w końcu sam kontroler.
 Jego zadaniem jest nadzorowanie całej operacji, zatem odbierze smsa i sprawdzi uprawnienia. Jeśli je mamy, przekaże sterowanie klasie odpowiedzialnej za sugerowanie następnego pubu (nazwiemy ją SmsAdvisor), a jeśli nie, poprosi Open API uprawnienie i zaplanuje uruchomienie zadania w Quartzu. Uruchamianie zadań w Quartzu wygląda na odpowiedzialność innego obiektu, więc stworzymy do tego celu osobną klasę: SmsJobPlanner.
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/grails-app/controllers/nextbeer/openAPIController.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/grails-app/controllers/nextbeer/OpenapiController.groovy
 
 
 
