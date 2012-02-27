@@ -132,14 +132,15 @@ No dobrze, wiemy już że będziemy mieć kontroler Open APIController z paramet
 Zacznimy od interfejsu Open API. Wiemy co Open API nam udostępnia i czego oczekujemy, zatem nasz interfejs będzie wyglądał tak:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openAPI/OpenApiFacade.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenApiFacade.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenApiFacade.groovy
 
 
 
 Jego mock będzie odrobinę bardziej skomplikowany. Grails generalnie preferuje ręczne tworzenie mocków ponad wykorzystanie gotowych bibliotek mockujących (choć oczywiście posiada MockFor), więc tak też zrobimy. Potrzebujemy przechowywać wywołania by później je zweryfikować. Dobrze by było też, by nasz mock zachowywał się jak prawdziwe Open API, tzn. zapytany o uprawnienie do lokalizacji użytkownika, zwracał „true” dopiero po którymś wywołaniu.
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openAPI/OpenApiFacadeMock.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenApiFacadeMock.groovy
 
 
 
@@ -162,7 +163,7 @@ Brakuje nam jeszcze prawdziwej implementacji, która będzie wykorzystana w śro
 
 W efekcie powstaje nam klasa o takim wyglądzie:
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openAPI/OpenApiFacadeImpl.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenApiFacadeImpl.groovy
 
 
 
@@ -175,23 +176,23 @@ Przy weryfikacji odpowiedzi sprawdzimy nagłówek HTTP. W dokumentacji wersji be
 OpenAPIResponseValidator będzie zatem wyglądał tak:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openAPI/OpenAPIResponseValidator.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenAPIResponseValidator.groovy
 
 
 Warto sobie pomóc przy testach manualnych klasy OpenApiFacadeImpl (na wypadek zmiany api) i napisać test do wywołania ręcznego: 
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/openAPI/OpenApiFacadeImplTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/openApi/OpenApiFacadeImplTest.groovy
 
 
 Jecznocześnie metody parsujące xml'a i walidator,  możemy przetestować testem jednostkowym:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openAPI/OpenApiFacadeImplUnitTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openApi/OpenApiFacadeImplUnitTest.groovy
 
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openAPI/OpenAPIResponseValidatorTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openApi/OpenAPIResponseValidatorTest.groovy
 
 
 
