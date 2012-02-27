@@ -133,7 +133,6 @@ Zacznimy od interfejsu Open API. Wiemy co Open API nam udostępnia i czego oczek
 
 
 https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenApiFacade.groovy
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenApiFacade.groovy
 
 
 
@@ -176,7 +175,7 @@ Przy weryfikacji odpowiedzi sprawdzimy nagłówek HTTP. W dokumentacji wersji be
 OpenAPIResponseValidator będzie zatem wyglądał tak:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenAPIResponseValidator.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenApiResponseValidator.groovy
 
 
 Warto sobie pomóc przy testach manualnych klasy OpenApiFacadeImpl (na wypadek zmiany api) i napisać test do wywołania ręcznego: 
@@ -192,7 +191,7 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openAp
 
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openApi/OpenAPIResponseValidatorTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openApi/OpenApiResponseValidatorTest.groovy
 
 
 
