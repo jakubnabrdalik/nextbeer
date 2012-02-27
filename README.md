@@ -120,7 +120,7 @@ Założymy też, że użytkownik może w smsie podać promień, w jakim interesu
 Nasz test wygląda zatem tak:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/OpenAPIControllerTests.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/openapiControllerTests.groovy
 
 
 W rzeczywistości będziemy się odpytywać Open API o pozwolenie użytkownika pięć razy co trzydzieści sekund, ale ponieważ taki test trwałby bardzo długo, parametryzujemy ten czas i ustawiamy w teście na sekundę. Test nadal będzie się wykonywał długo, ale jako że jest to jedyny  test akceptacyjny w naszej małej aplikacji, możemy sobie na to pozwolić. W przypadku większej aplikacji, powinniśmy ustalić sztuczną jednostkę czasu na potrzeby testu, by mieć go w pełni pod kontrolą. Test jest dość słaby (nie walidujemy wysyłanego smsa), ale na początek wystarczy.
@@ -132,14 +132,14 @@ No dobrze, wiemy już że będziemy mieć kontroler Open APIController z paramet
 Zacznimy od interfejsu Open API. Wiemy co Open API nam udostępnia i czego oczekujemy, zatem nasz interfejs będzie wyglądał tak:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/OpenAPI/OpenAPIFacade.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openAPI/OpenApiFacade.groovy
 
 
 
 Jego mock będzie odrobinę bardziej skomplikowany. Grails generalnie preferuje ręczne tworzenie mocków ponad wykorzystanie gotowych bibliotek mockujących (choć oczywiście posiada MockFor), więc tak też zrobimy. Potrzebujemy przechowywać wywołania by później je zweryfikować. Dobrze by było też, by nasz mock zachowywał się jak prawdziwe Open API, tzn. zapytany o uprawnienie do lokalizacji użytkownika, zwracał „true” dopiero po którymś wywołaniu.
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/OpenAPI/OpenAPIFacadeMock.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openAPI/OpenApiFacadeMock.groovy
 
 
 
@@ -147,22 +147,22 @@ Tak stworzony mock, możemy podać do kontrolera w teście, ale ze względów os
 zrobił  pobieżne review
 
         if (GrailsUtil.environment == "test") {
-                OpenAPIFacade(OpenAPIFacadeMock, 4) {}
+                OpenApiFacade(OpenApiFacadeMock, 4) {}
         } else {
-                OpenAPIFacade(OpenAPIFacadeImpl, application.config.OpenAPI.key, application.config.OpenAPI.url) {}
+                OpenApiFacade(OpenApiFacadeImpl, application.config.OpenAPI.key, application.config.OpenAPI.url) {}
         }
 
 
 Dla osób nie znających Grailsów, a przyzwyczajonych do Springa, taka konfiguracja może się wydawać odrobinę dziwna, więc przyda się wytłumaczenie:
-GrailsUtil.environment działa podobnie jak profile w Springu 3.1. Rejestracji beanów dokonuje się DSL'em (Domain Specific Language), podając nazwę pod jaką bean będzie zarejestrowany  (tu: OpenAPIFacade), jako pierwszy parametr, jego klasę, jako kolejne parametry, wartości przekazane do konstruktora, zaś w nawiasach klamrowych uzupełniając jego properties.
+GrailsUtil.environment działa podobnie jak profile w Springu 3.1. Rejestracji beanów dokonuje się DSL'em (Domain Specific Language), podając nazwę pod jaką bean będzie zarejestrowany  (tu: OpenApiFacade), jako pierwszy parametr, jego klasę, jako kolejne parametry, wartości przekazane do konstruktora, zaś w nawiasach klamrowych uzupełniając jego properties.
 
 
-Brakuje nam jeszcze prawdziwej implementacji, która będzie wykorzystana w środowisku produkcyjnym (OpenAPIFacadeImpl). Co do tego fragmentu nie ma sensu tworzyć założeń a priori, lepiej napisać klasę stosując prototypowanie i sprawdzając odpowiedzi „fizycznie”.
+Brakuje nam jeszcze prawdziwej implementacji, która będzie wykorzystana w środowisku produkcyjnym (OpenApiFacadeImpl). Co do tego fragmentu nie ma sensu tworzyć założeń a priori, lepiej napisać klasę stosując prototypowanie i sprawdzając odpowiedzi „fizycznie”.
 
 
 W efekcie powstaje nam klasa o takim wyglądzie:
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/OpenAPI/OpenAPIFacadeImpl.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openAPI/OpenApiFacadeImpl.groovy
 
 
 
@@ -175,23 +175,23 @@ Przy weryfikacji odpowiedzi sprawdzimy nagłówek HTTP. W dokumentacji wersji be
 OpenAPIResponseValidator będzie zatem wyglądał tak:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/OpenAPI/OpenAPIResponseValidator.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openAPI/OpenAPIResponseValidator.groovy
 
 
-Warto sobie pomóc przy testach manualnych klasy OpenAPIFacadeImpl (na wypadek zmiany api) i napisać test do wywołania ręcznego: 
+Warto sobie pomóc przy testach manualnych klasy OpenApiFacadeImpl (na wypadek zmiany api) i napisać test do wywołania ręcznego: 
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/OpenAPI/OpenAPIFacadeImplTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/openAPI/OpenApiFacadeImplTest.groovy
 
 
 Jecznocześnie metody parsujące xml'a i walidator,  możemy przetestować testem jednostkowym:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/OpenAPI/OpenAPIFacadeImplUnitTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openAPI/OpenApiFacadeImplUnitTest.groovy
 
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/OpenAPI/OpenAPIResponseValidatorTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openAPI/OpenAPIResponseValidatorTest.groovy
 
 
 
@@ -204,7 +204,7 @@ Skoro już załatwiliśmy sprawę Open API, napiszmy w końcu sam kontroler.
 Jego zadaniem jest nadzorowanie całej operacji, zatem odbierze smsa i sprawdzi uprawnienia. Jeśli je mamy, przekaże sterowanie klasie odpowiedzialnej za sugerowanie następnego pubu (nazwiemy ją SmsAdvisor), a jeśli nie, poprosi Open API uprawnienie i zaplanuje uruchomienie zadania w Quartzu. Uruchamianie zadań w Quartzu wygląda na odpowiedzialność innego obiektu, więc stworzymy do tego celu osobną klasę: SmsJobPlanner.
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/grails-app/controllers/nextbeer/OpenAPIController.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/grails-app/controllers/nextbeer/openAPIController.groovy
 
 
 
@@ -260,8 +260,8 @@ Trzeba to jeszcze wszystko spiąć kontekstem springowym, dodając do grails-app
 
 
         googlePlacesFacade(GooglePlacesFacade, application.config.google.places.api.key) {}
-        smsAdvisor(SmsAdvisor, OpenAPIFacade, googlePlacesFacade) {}
-        smsJobPlanner(SmsJobPlanner, OpenAPIFacade, ref("quartzScheduler"), smsAdvisor) {}
+        smsAdvisor(SmsAdvisor, OpenApiFacade, googlePlacesFacade) {}
+        smsJobPlanner(SmsJobPlanner, OpenApiFacade, ref("quartzScheduler"), smsAdvisor) {}
 
 
 I gotowe.
