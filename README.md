@@ -1,3 +1,4 @@
+
 # Wprowadzenie
 
 
@@ -126,7 +127,7 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer
 W rzeczywistości będziemy się odpytywać Open API o pozwolenie użytkownika pięć razy co trzydzieści sekund, ale ponieważ taki test trwałby bardzo długo, parametryzujemy ten czas i ustawiamy w teście na sekundę. Test nadal będzie się wykonywał długo, ale jako że jest to jedyny  test akceptacyjny w naszej małej aplikacji, możemy sobie na to pozwolić. W przypadku większej aplikacji, powinniśmy ustalić sztuczną jednostkę czasu na potrzeby testu, by mieć go w pełni pod kontrolą. Test jest dość słaby (nie walidujemy wysyłanego smsa), ale na początek wystarczy.
 
 
-No dobrze, wiemy już że będziemy mieć kontroler Open APIController z parametrem checkPermissionIntervalInSeconds i metodą propose(). Wiemy również, że potrzebujemy mieć jakąś fasadę do Open API, z interfejsem, implementacją oraz mockiem na potrzeby testów i developmentu, który w dodatku będziemy odpytywać o ostatnie wywołanie. 
+No dobrze, wiemy już że będziemy mieć kontroler OpenapiController z parametrem checkPermissionIntervalInSeconds i metodą propose(). Wiemy również, że potrzebujemy mieć jakąś fasadę do Open API, z interfejsem, implementacją oraz mockiem na potrzeby testów i developmentu, który w dodatku będziemy odpytywać o ostatnie wywołanie. 
 
 
 Zacznimy od interfejsu Open API. Wiemy co Open API nam udostępnia i czego oczekujemy, zatem nasz interfejs będzie wyglądał tak:
@@ -144,17 +145,17 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openA
 
 
 Tak stworzony mock, możemy podać do kontrolera w teście, ale ze względów oszczędnościowych przyda nam się także podczas developmentu, więc zadeklarujemy go sobie w profilu „test” kontekstu Springowego. By to zrobić, do pliku  grails-app/conf/spring/resources.groovy dodajemy:
-zrobił  pobieżne review
+*zrobić  pobieżne review*
 
         if (GrailsUtil.environment == "test") {
-                OpenApiFacade(OpenApiFacadeMock, 4) {}
+                OpenAPIFacade(OpenApiFacadeMock, 4) {}
         } else {
-                OpenApiFacade(OpenApiFacadeImpl, application.config.OpenAPI.key, application.config.OpenAPI.url) {}
+                OpenAPIFacade(OpenApiFacadeImpl, application.config.OpenAPI.key, application.config.OpenAPI.url) {}
         }
 
 
 Dla osób nie znających Grailsów, a przyzwyczajonych do Springa, taka konfiguracja może się wydawać odrobinę dziwna, więc przyda się wytłumaczenie:
-GrailsUtil.environment działa podobnie jak profile w Springu 3.1. Rejestracji beanów dokonuje się DSL'em (Domain Specific Language), podając nazwę pod jaką bean będzie zarejestrowany  (tu: OpenApiFacade), jako pierwszy parametr, jego klasę, jako kolejne parametry, wartości przekazane do konstruktora, zaś w nawiasach klamrowych uzupełniając jego properties.
+GrailsUtil.environment działa podobnie jak profile w Springu 3.1. Rejestracji beanów dokonuje się DSL'em (Domain Specific Language), podając nazwę pod jaką bean będzie zarejestrowany  (tu: OpenAPIFacade), jako pierwszy parametr, jego klasę, jako kolejne parametry, wartości przekazane do konstruktora, zaś w nawiasach klamrowych uzupełniając jego properties.
 
 
 Brakuje nam jeszcze prawdziwej implementacji, która będzie wykorzystana w środowisku produkcyjnym (OpenApiFacadeImpl). Co do tego fragmentu nie ma sensu tworzyć założeń a priori, lepiej napisać klasę stosując prototypowanie i sprawdzając odpowiedzi „fizycznie”.
@@ -172,7 +173,7 @@ Wszystkie metody mają podobny schemat, tzn. przygotowują parametry requesta (H
 Przy weryfikacji odpowiedzi sprawdzimy nagłówek HTTP. W dokumentacji wersji beta Open API, nie mam jeszcze informacji o oczekiwanych odpowiedziach w przypadku błedu, ale w praktyce wygląda na to, że wystarczy wyszukać w XML'u wartości „failed” lub „failure”. 
 
 
-OpenAPIResponseValidator będzie zatem wyglądał tak:
+OpenApiResponseValidator będzie zatem wyglądał tak:
 
 
 https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openApi/OpenApiResponseValidator.groovy
@@ -260,8 +261,8 @@ Trzeba to jeszcze wszystko spiąć kontekstem springowym, dodając do grails-app
 
 
         googlePlacesFacade(GooglePlacesFacade, application.config.google.places.api.key) {}
-        smsAdvisor(SmsAdvisor, OpenApiFacade, googlePlacesFacade) {}
-        smsJobPlanner(SmsJobPlanner, OpenApiFacade, ref("quartzScheduler"), smsAdvisor) {}
+        smsAdvisor(SmsAdvisor, OpenAPIFacade, googlePlacesFacade) {}
+        smsJobPlanner(SmsJobPlanner, OpenAPIFacade, ref("quartzScheduler"), smsAdvisor) {}
 
 
 I gotowe.
@@ -292,3 +293,4 @@ Ewentualnie możemy aplikację uogólnić i wczytać z smsa nie tylko promień, 
 
 
 Cały przedstawiony przykład działa jeszcze przed upublicznieniem oficjalnej wersji Open API, zaś Google Places Api jest w fazie „experimental”, zatem niekoniecznie będzie on odpowiadał wersjom ostatecznym poszczególnych serwisów. Warto skorzystać z aktualnej dokumentacji (której niestety nie posiadam), przed wysłaniem bomby do autora.
+
