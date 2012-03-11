@@ -1,4 +1,3 @@
-
 # Wprowadzenie
 
 
@@ -81,7 +80,7 @@ Całą uzyskaną konfigurację zapisujemy w pliku grails-app/conf/external-confi
         google.places.api.key=bardzolosowyklucz
         OpenAPI.key=jeszczebardziejlosowyklucz
         OpenAPI.testNumber=4899999999
-        OpenAPI.url=http://jakisurl/core/api/OverviewSequenceDiagram
+        OpenAPI.url=http://jakisurl
 
 
 Poza dwoma kluczami przyda nam się numer do testów pół-automatycznych (OpenAPI.testNumber),  i należy tam wpisać numer własnej komórki.
@@ -145,7 +144,7 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openA
 
 
 Tak stworzony mock, możemy podać do kontrolera w teście, ale ze względów oszczędnościowych przyda nam się także podczas developmentu, więc zadeklarujemy go sobie w profilu „test” kontekstu Springowego. By to zrobić, do pliku  grails-app/conf/spring/resources.groovy dodajemy:
-*zrobić  pobieżne review*
+
 
         if (GrailsUtil.environment == "test") {
                 OpenAPIFacade(OpenApiFacadeMock, 4) {}
