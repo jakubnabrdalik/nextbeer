@@ -198,8 +198,13 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openAp
 # Kontroler
 
 
-Skoro już załatwiliśmy sprawę Open API, napiszmy w końcu sam kontroler.
+Open Api jest serwisem REST'owym i podobnego zachowania oczekuje od nas. Gdy użytkownik wyśle do nas sms, Open Api prześle go w postaci POST'a na wskazany callback url. Musimy zatem skonfigurować takie mapowanie URL by uruchomiony został nasz kontroler. W Grails, można to zrobić na przykład dodając statyczne mapowanie, tzn. do pliku conf/UrlMappings.groovy w bloku "static mappings" dodajemy:
 
+    "/openapi/propose"(controller: "openapi", parseRequest: true) {
+        action = [GET: "propose", PUT: "propose", DELETE: "propose", POST: "propose"]
+    }
+
+Skoro już załatwiliśmy sprawę Open API, napiszmy w końcu sam kontroler.
 
 Jego zadaniem jest nadzorowanie całej operacji, zatem odbierze smsa i sprawdzi uprawnienia. Jeśli je mamy, przekaże sterowanie klasie odpowiedzialnej za sugerowanie następnego pubu (nazwiemy ją SmsAdvisor), a jeśli nie, poprosi Open API uprawnienie i zaplanuje uruchomienie zadania w Quartzu. Uruchamianie zadań w Quartzu wygląda na odpowiedzialność innego obiektu, więc stworzymy do tego celu osobną klasę: SmsJobPlanner.
 
