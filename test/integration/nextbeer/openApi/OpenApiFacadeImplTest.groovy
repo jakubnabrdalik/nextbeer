@@ -9,7 +9,7 @@ class OpenApiFacadeImplTest {
     String testNumber
 
     @Before
-    void createGooglePlacesFacadeWithGoogleApiKey() {
+    void createOpenApiFacadeWithApiKey() {
         Properties properties = new Properties()
         properties.load(new FileReader(new File("grails-app/conf/external-config.properties")))
         String openApiKey = properties.get("openapi.key")

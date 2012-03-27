@@ -9,8 +9,9 @@ class OpenapiControllerTests {
     //BEWARE: this test is slow (waits for 10 seconds) because it tests quartz job schedulling
     void shouldSendSmsViaOpenApi() {
         //given
-        params.from = "789456123"
-        params.text = "5000"
+        params.api = new LinkedHashMap<String, String>()
+        params.api."request[1].sender" = "789456123"
+        params.api."request[1].text" = "5000"
         controller.checkPermissionIntervalInSeconds = 1
 
         //when

@@ -1,21 +1,22 @@
 package nextbeer.openApi
 
+import groovy.transform.PackageScope
 import groovy.util.slurpersupport.NodeChild
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
-import groovy.transform.PackageScope
 
 class OpenApiFacadeImpl implements OpenApiFacade{
-    private static final String hasPermissionUrlSuffix = "permission/list"
-    private static final String askForPermissionUrlSuffix = "permission/get"
-    private static final String getLocationUrlSuffix = "location/get"
-    private static final String sendSmsUrlSuffix = "messaging/sms"
+    private static final String hasPermissionUrlSuffix = "api/permission/list"
+    private static final String askForPermissionUrlSuffix = "api/permission/get"
+    private static final String getLocationUrlSuffix = "api/location/get"
+    private static final String sendSmsUrlSuffix = "api/messaging/sms"
     private final String apiKey
     private final RESTClient openApiClient
 
     OpenApiFacadeImpl(String apiKey, String apiUrl) {
         this.apiKey = apiKey
         openApiClient = new RESTClient(apiUrl)
+        System.out.println(apiUrl)
     }
 
     @Override

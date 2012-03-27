@@ -9,8 +9,10 @@ class OpenapiController {
     SmsJobPlanner smsJobPlanner
 
     def propose() {
-        String phoneNumber = params.from
-        int rangeInMeters = (params.text != null) ? params.getInt("text") : 3000
+        String phoneNumber = params.api."request[1].sender"
+        String text = params.api."request[1].text"
+        log.debug("Sms received. Sender: $phoneNumber, text: $text")
+        int rangeInMeters = (text != null) ? text.toInteger() : 3000
 
         if(openApiFacade.hasPermissionToGetLocation(phoneNumber)) {
             smsAdvisor.sendSmsWithProposalsForCurrentLocation(phoneNumber, rangeInMeters)
