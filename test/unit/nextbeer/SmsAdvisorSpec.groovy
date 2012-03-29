@@ -1,0 +1,5 @@
+
+package nextbeer
+
+class SmsAdvisorSpec {
+}
