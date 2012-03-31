@@ -6,6 +6,8 @@ import nextbeer.google.GooglePlacesFacade
 import nextbeer.openApi.OpenApiFacadeImpl
 import nextbeer.openApi.OpenApiFacadeMock
 import grails.plugin.quartz2.QuartzFactoryBean
+import nextbeer.aop.LoggingAspect
+import nextbeer.aop.Pointcuts
 
 // Place your Spring DSL code here
 beans = {
@@ -18,4 +20,7 @@ beans = {
     googlePlacesFacade(GooglePlacesFacade, application.config.google.places.api.key) {}
     smsAdvisor(SmsAdvisor, openApiFacade, googlePlacesFacade) {}
     smsJobPlanner(SmsJobPlanner, openApiFacade, ref("quartzScheduler"), smsAdvisor) {}
+
+    pointcuts(Pointcuts) {}
+    debugAspect(LoggingAspect, "DebugOpenApiAdvice") {}
 }

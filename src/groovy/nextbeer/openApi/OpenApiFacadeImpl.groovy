@@ -5,7 +5,6 @@ import groovy.util.slurpersupport.NodeChild
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
 import org.apache.commons.logging.LogFactory
-import groovyx.net.http.HttpResponseException
 
 class OpenApiFacadeImpl implements OpenApiFacade{
     private static final String hasPermissionUrlSuffix = "api/permission/list"
@@ -16,10 +15,12 @@ class OpenApiFacadeImpl implements OpenApiFacade{
     private final RESTClient openApiClient
     private static final log = LogFactory.getLog(this)
 
-    OpenApiFacadeImpl(String apiKey, String apiUrl) {
+    public OpenApiFacadeImpl(String apiKey, String apiUrl) {
         this.apiKey = apiKey
         openApiClient = new RESTClient(apiUrl)
     }
+
+    protected OpenApiFacadeImpl() {} //required by cglib
 
     @Override
     public boolean hasPermissionToGetLocation(String phoneNumber) {
@@ -62,16 +63,6 @@ class OpenApiFacadeImpl implements OpenApiFacade{
     }
 
     private HttpResponseDecorator callOpenApi(String urlSuffix, LinkedHashMap<String, String> queryParams) {
-        HttpResponseDecorator placesResponseDecorator
-        try {
-            log.debug("Calling $urlSuffix withg params: $queryParams")
-            placesResponseDecorator = openApiClient.get(path: urlSuffix, query: queryParams)
-        } catch( HttpResponseException exception ) {
-            log.error("OpenApi call ended with exception. Response: $exception.response", exception)
-            log.error("Response status: $exception.response.status")
-            log.error("Response headers: $exception.response.allHeaders")
-            throw exception
-        }
-        return placesResponseDecorator
+        return openApiClient.get(path: urlSuffix, query: queryParams)
     }
 }

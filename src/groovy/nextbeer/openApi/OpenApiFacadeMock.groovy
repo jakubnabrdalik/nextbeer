@@ -9,6 +9,8 @@ class OpenApiFacadeMock implements OpenApiFacade {
         this.whichCallToHasPermissionShouldReturnTrue = whichCallToHasPermissionShouldReturnTrue
     }
 
+    public OpenApiFacadeMock() {} //required by cglib
+
     public boolean hasPermissionToGetLocation(String phoneNumber) {
         calls << "hasPermissionToGetLocation"
         if(hasPermissionCall < whichCallToHasPermissionShouldReturnTrue) {
