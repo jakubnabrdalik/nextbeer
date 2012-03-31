@@ -23,7 +23,7 @@ class SmsAdvisor {
         } else {
             List<PlaceDetails> placesWithDetails = googlePlacesFacade.getDetailsAsync(places.collect {it.reference})
             String smsText = placesWithDetails.collect {it.name + ", " + it.vicinity + ", " + it.phone}.join("\n")
-            openApiFacade.sendSms(phoneNumber, smsText)
+            openApiFacade.sendSms(phoneNumber, URLEncoder.encode(smsText))
         }
     }
 }
