@@ -90,8 +90,8 @@ log4j = {
            'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
            'org.springframework',
            'org.hibernate',
-           'net.sf.ehcache.hibernate',
-           'nextbeer'
+           'net.sf.ehcache.hibernate'
+    debug  'nextbeer'
 
-    trace  'DebugOpenApiAdvice'
+    debug  'DebugOpenApiAdvice'
 }
