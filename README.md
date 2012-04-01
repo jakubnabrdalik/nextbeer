@@ -312,12 +312,6 @@ I pozostało zadeklarować obie klasy w konfiguracji Springa, czyli conf/spring/
 Aspekty zostaną nałożone bez dodatkowej konfiguracji.
 
 
-# Odpalamy wszystko razem
-
-
-(TODO: wstawić obrazki, komórka z smsem wysyłanym i przychodzącym)
-
-
 # Czego brakuje
 
 
