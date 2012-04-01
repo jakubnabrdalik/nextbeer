@@ -44,7 +44,7 @@ Wygląda prosto, prawda? I dokładnie tak jest. Przejdźmy zatem do działania.
 # Technologia
 
 
-Open API jest serwisem REST'owym (JSON lub XML po HTTP), podobnie Google Places, zatem możemy skorzystać z dowolnej technologii webowej. Ze względu na prostotę i czytelność, przykład zrobimy w Grails (wersja 2.0.1). Do opóźnionego odpytywania, wykorzystamy bibliotekę Quartz i plugin do jej nowszej wersji (https://github.com/9ci/grails-quartz2). Komunikację REST'ową uprościmy sobie przy pomocy pluginu HTTPBuilder (http://groovy.codehaus.org/modules/http-builder).
+Open API jest serwisem REST'owym (JSON lub XML po HTTP), podobnie Google Places, zatem możemy skorzystać z dowolnej technologii webowej. Ze względu na prostotę i czytelność, przykład zrobimy w Grails (wersja 2.0.2). Do opóźnionego odpytywania, wykorzystamy bibliotekę Quartz i plugin do jej nowszej wersji (https://github.com/9ci/grails-quartz2). Komunikację REST'ową uprościmy sobie przy pomocy pluginu HTTPBuilder (http://groovy.codehaus.org/modules/http-builder).
 
 
 Cały kod aplikacji jest dostępny w githubie: https://github.com/jakubnabrdalik/nextbeer
@@ -53,16 +53,17 @@ Cały kod aplikacji jest dostępny w githubie: https://github.com/jakubnabrdalik
 # Zaczynamy
 
 
-Instalujemy Javę 6 lub 7, Grails'y 2.0.1 (http://grails.org/), otwieramy basha i tworzymy nową aplikację poleceniem:
+Instalujemy Javę 6 lub 7, Grails'y 2.0.2 (http://grails.org/), otwieramy basha i tworzymy nową aplikację poleceniem:
 
 
         grails create-app nextbeer
 
 
-Dodajemy plugin do quartza:
+Dodajemy plugin do quartza i biblioteki testującej spock:
 
 
         grails install-plugin quartz2
+        grails install-plugin spock
 
 
 Rejestrujemy się w Open API oraz w GoogleApi. 
@@ -143,18 +144,24 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openA
 
 
 
-Tak stworzony mock, możemy podać do kontrolera w teście, ale ze względów oszczędnościowych przyda nam się także podczas developmentu, więc zadeklarujemy go sobie w profilu „test” kontekstu Springowego. By to zrobić, do pliku  grails-app/conf/spring/resources.groovy dodajemy:
+Tak stworzony mock, możemy podać do kontrolera w teście, ale ze względów oszczędnościowych przyda nam się także podczas developmentu, więc zadeklarujemy go sobie w profilu „dev” kontekstu Springowego. By to zrobić, do pliku  grails-app/conf/spring/resources.groovy dodajemy:
 
-
-        if (GrailsUtil.environment == "test") {
-                OpenAPIFacade(OpenApiFacadeMock, 4) {}
-        } else {
-                OpenAPIFacade(OpenApiFacadeImpl, application.config.OpenAPI.key, application.config.OpenAPI.url) {}
+        Environment.executeForCurrentEnvironment {
+            production {
+                openApiFacade(OpenApiFacadeImpl, application.config.openapi.key, application.config.openapi.url) {}
+            }
+            development {
+                openApiFacade(OpenApiFacadeMock, 4) {}
+            }
+            test {
+                openApiFacade(OpenApiFacadeMock, 4) {}
+            }
         }
 
+Teraz już możemy odpalać aplikację bezpiecznie (z OpenApiFacadeMock) wywołując grails run-app -Dgrails.env=dev
 
 Dla osób nie znających Grailsów, a przyzwyczajonych do Springa, taka konfiguracja może się wydawać odrobinę dziwna, więc przyda się wytłumaczenie:
-GrailsUtil.environment działa podobnie jak profile w Springu 3.1. Rejestracji beanów dokonuje się DSL'em (Domain Specific Language), podając nazwę pod jaką bean będzie zarejestrowany  (tu: OpenAPIFacade), jako pierwszy parametr, jego klasę, jako kolejne parametry, wartości przekazane do konstruktora, zaś w nawiasach klamrowych uzupełniając jego properties.
+Environment działa podobnie jak profile w Springu 3.1. Rejestracji beanów dokonuje się DSL'em (Domain Specific Language), podając nazwę pod jaką bean będzie zarejestrowany  (tu: OpenAPIFacade), jako pierwszy parametr, jego klasę, jako kolejne parametry, wartości przekazane do konstruktora, zaś w nawiasach klamrowych uzupełniając jego properties.
 
 
 Brakuje nam jeszcze prawdziwej implementacji, która będzie wykorzystana w środowisku produkcyjnym (OpenApiFacadeImpl). Co do tego fragmentu nie ma sensu tworzyć założeń a priori, lepiej napisać klasę stosując prototypowanie i sprawdzając odpowiedzi „fizycznie”.
@@ -251,6 +258,15 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/googl
 https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/google/details/PlaceDetails.groovy
 
 
+W końcu piszemy test (tu wykorzystując bibliotekę Spock)
+
+https://raw.github.com/jakubnabrdalik/nextbeer/master/test/unit/nextbeer/SmsAdvisorSpec.groovy
+
+... oraz sam SmsAdvisor
+
+https://raw.github.com/jakubnabrdalik/nextbeer/master/src/groovy/nextbeer/SmsAdvisor.groovy
+
+
 
 # SmsJobPlanner
 
@@ -272,6 +288,30 @@ Trzeba to jeszcze wszystko spiąć kontekstem springowym, dodając do grails-app
 I gotowe.
 
 
+# Logowanie
+
+W kontrolerze mamy już logowanie, przydałoby nam się jeszcze logowanie wywołań Open Api, czyli wszystkich metod klas OpenApiFacade*. Chcielibyśmy pewnie również logować wyjątki komunikacji HTTP (HttpResponseException). Możemy takie logowanie napisać podobnie jak w kontrolerze, ale szczerze mówiąc, logowanie to typowy przykład "cross cutting concern", czyli problem idealnie nadający się do zrealizowania aspektami (Aspect Oriented Programming).
+
+Skoro mamy Grooviewgo, możemy nałożyć aspekt przy pomocy metaklasy, by dodać nasz logger, ale ponieważ Grails działa na Spring Framework, zastosuję tutaj bibliotekę AspectJ i proxy.
+
+Najpierw tworzymy Pointcuty:
+
+https://raw.github.com/jakubnabrdalik/nextbeer/master/src/groovy/nextbeer/aop/Pointcuts.groovy
+
+Jak widać, wycinamy wszystkie wywołania getMetaClass, których w tej technologii jest mnóstwo, a które nas zupełnie nie interesują.
+
+Teraz przyszedł czas na aspekt:
+
+https://raw.github.com/jakubnabrdalik/nextbeer/master/src/groovy/nextbeer/aop/LoggingAspect.groovy
+
+I pozostało zadeklarować obie klasy w konfiguracji Springa, czyli conf/spring/resources.groovy:
+
+        pointcuts(Pointcuts) {}
+        debugAspect(LoggingAspect, "DebugOpenApiAdvice") {}
+
+Aspekty zostaną nałożone bez dodatkowej konfiguracji.
+
+
 # Odpalamy wszystko razem
 
 
@@ -286,8 +326,9 @@ Aplikacja ta raczej nie zarobi dla nas kokosów, biorąc pod uwagę jak mało mi
 
 Co należałoby dodać? 
 
+Nie obsłużyliśmy sytuacji, gdy ilość adresów do wysłania będzie przekraczała wielkość pojedynczego sms'a. Treść sms'a wysyłamy GET'em, kodując dane zgodnie z zasadami kodowania URLi, ale niestety na dzień dzisiejszy OpenApi nie odkodowywuje tego z powrotem, powodując, że w sms'ie przychodzą "dziwne znaczki". Szczerze, w wersji Open Api którą testuję, nie wiem jak ten problem rozwiązać. Być może w wersji oficjalnej pojawią się zmiany.
 
-Nie zrobiliśmy logowania, które z pewnością przydałoby się w wersji produkcyjnej. Możemy również pobrać informacje o modelu komórki, z której przyszedł sms, i dostosować do niej odpowiedź. Dla komórek posiadających przeglądarkę, choćby ubogą, można wysłać adres strony WWW poszczególnych miejsc lub zdjęcie z niej pobrane. Moglibyśmy się też pokusić o parsowanie stron i wyszukiwanie informacji o godzinach otwarcia (niestety Google Places jej nie ma, a puby nie zawsze je zamieszczają na stronach). Moglibyśmy również wyeliminować miejsca, które nie pasują do naszego profilu (pijalnia czekolady?).
+Moglibyśmy poza tym pobrać informacje o modelu komórki, z której przyszedł sms, i dostosować do niej odpowiedź. Dla komórek posiadających przeglądarkę, choćby ubogą, można wysłać adres strony WWW poszczególnych miejsc lub zdjęcie z niej pobrane. Moglibyśmy się też pokusić o parsowanie stron i wyszukiwanie informacji o godzinach otwarcia (niestety Google Places jej nie ma, a puby nie zawsze je zamieszczają na stronach). Moglibyśmy również wyeliminować miejsca, które nie pasują do naszego profilu (pijalnia czekolady?).
 
 
 Ewentualnie możemy aplikację uogólnić i wczytać z smsa nie tylko promień, ale także hasło po którym wyszukamy miejsca w Google Api.

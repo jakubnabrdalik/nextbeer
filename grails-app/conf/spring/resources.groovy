@@ -16,6 +16,9 @@ beans = {
         development {
             openApiFacade(OpenApiFacadeMock, 4) {}
         }
+        test {
+            openApiFacade(OpenApiFacadeMock, 4) {}
+        }
     }
 
     googlePlacesFacade(GooglePlacesFacade, application.config.google.places.api.key) {}
