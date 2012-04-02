@@ -103,7 +103,7 @@ Pliki w katalogu conf są automatycznie dodawane do classpath.
 # Jak to przetestować?
 
 
-Zgodnie z duchem Test Driven Development, zaczynamy od testu. Nasza aplikacja ma jeden punkt wejścia, który w dodatku będzie zwykłym kontrolerem Grailsowym (wzorzecz MVC). Po jakimś czasie (maksimum ustalone jest przez nas) od jego wywołania, Open API powinno dostać od nas smsa z lokalizacjami. 
+Zgodnie z duchem Test Driven Development, zaczynamy od testu. Wykorzystamy bibliotekę Spock w wersji 0.6. Nasza aplikacja ma jeden punkt wejścia, który w dodatku będzie zwykłym kontrolerem Grailsowym (wzorzecz MVC). Po jakimś czasie (maksimum ustalone jest przez nas) od jego wywołania, Open API powinno dostać od nas smsa z lokalizacjami.
 
 
 Stworzymy test integracyjny end-to-end, który odpowie nam czy aplikacja działa. Teraz mamy do wyboru dwie możliwości: albo zaślepiamy zewnętrzne serwisy tworząc mocki/stuby, co da nam powtarzalność testów, albo testujemy z wykorzystaniem zewnętrznych serwisów, co nas uzależnia od dostawców.
@@ -121,7 +121,7 @@ Założymy też, że użytkownik może w smsie podać promień, w jakim interesu
 Nasz test wygląda zatem tak:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/OpenapiControllerTests.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/OpenapiControllerSpec.groovy
 
 
 W rzeczywistości będziemy się odpytywać Open API o pozwolenie użytkownika pięć razy co trzydzieści sekund, ale ponieważ taki test trwałby bardzo długo, parametryzujemy ten czas i ustawiamy w teście na sekundę. Test nadal będzie się wykonywał długo, ale jako że jest to jedyny  test akceptacyjny w naszej małej aplikacji, możemy sobie na to pozwolić. W przypadku większej aplikacji, powinniśmy ustalić sztuczną jednostkę czasu na potrzeby testu, by mieć go w pełni pod kontrolą. Test jest dość słaby (nie walidujemy wysyłanego smsa), ale na początek wystarczy.
@@ -188,17 +188,17 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/openA
 Warto sobie pomóc przy testach manualnych klasy OpenApiFacadeImpl (na wypadek zmiany api) i napisać test do wywołania ręcznego: 
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/openApi/OpenApiFacadeImplTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/integration/nextbeer/openApi/OpenApiFacadeImplManualTest.groovy
 
 
 Jecznocześnie metody parsujące xml'a i walidator,  możemy przetestować testem jednostkowym:
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openApi/OpenApiFacadeImplUnitTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openApi/OpenApiFacadeSpec.groovy
 
 
 
-https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openApi/OpenApiResponseValidatorTest.groovy
+https://github.com/jakubnabrdalik/nextbeer/blob/master/test/unit/nextbeer/openApi/OpenApiResponseValidatorSpec.groovy
 
 
 
@@ -258,7 +258,7 @@ https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/googl
 https://github.com/jakubnabrdalik/nextbeer/blob/master/src/groovy/nextbeer/google/details/PlaceDetails.groovy
 
 
-W końcu piszemy test (tu wykorzystując bibliotekę Spock)
+W końcu piszemy test:
 
 https://raw.github.com/jakubnabrdalik/nextbeer/master/test/unit/nextbeer/SmsAdvisorSpec.groovy
 
@@ -318,12 +318,13 @@ Aspekty zostaną nałożone bez dodatkowej konfiguracji.
 Aplikacja ta raczej nie zarobi dla nas kokosów, biorąc pod uwagę jak mało miejsc jest wpisanych w Google Places w Polsce. Sensowne wyniki dostaniemy jedynie dla głównych miast, a i tu jest krucho. Mam nadzieję jednak, że jako przykład wystarczy.
 
 
-Co należałoby dodać? 
+Co należałoby dodać/poprawić?
 
-Nie obsłużyliśmy sytuacji, gdy ilość adresów do wysłania będzie przekraczała wielkość pojedynczego sms'a. Treść sms'a wysyłamy GET'em, kodując dane zgodnie z zasadami kodowania URLi, ale niestety na dzień dzisiejszy OpenApi nie odkodowywuje tego z powrotem, powodując, że w sms'ie przychodzą "dziwne znaczki". Szczerze, w wersji Open Api którą testuję, nie wiem jak ten problem rozwiązać. Być może w wersji oficjalnej pojawią się zmiany.
+Nie obsłużyliśmy sytuacji, gdy ilość adresów do wysłania będzie przekraczała wielkość pojedynczego sms'a, a w centrum miasta to sytuacja gwarantowana.
+
+Treść sms'a wysyłamy GET'em, kodując dane zgodnie z zasadami kodowania URLi, ale niestety na dzień dzisiejszy OpenApi nie odkodowywuje tego z powrotem, powodując, że w sms'ie przychodzą "dziwne znaczki". Być może w wersji oficjalnej pojawią się zmiany i albo będziemy mogli używać POST'a, albo nastąpi odkodowywanie GET'a.
 
 Moglibyśmy poza tym pobrać informacje o modelu komórki, z której przyszedł sms, i dostosować do niej odpowiedź. Dla komórek posiadających przeglądarkę, choćby ubogą, można wysłać adres strony WWW poszczególnych miejsc lub zdjęcie z niej pobrane. Moglibyśmy się też pokusić o parsowanie stron i wyszukiwanie informacji o godzinach otwarcia (niestety Google Places jej nie ma, a puby nie zawsze je zamieszczają na stronach). Moglibyśmy również wyeliminować miejsca, które nie pasują do naszego profilu (pijalnia czekolady?).
-
 
 Ewentualnie możemy aplikację uogólnić i wczytać z smsa nie tylko promień, ale także hasło po którym wyszukamy miejsca w Google Api.
 
