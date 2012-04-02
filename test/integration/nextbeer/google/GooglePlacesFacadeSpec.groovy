@@ -1,44 +1,42 @@
+
 package nextbeer.google
 
-import org.junit.Before
-import org.junit.Test
-
-import nextbeer.google.places.Place
 import nextbeer.google.details.PlaceDetails
+import nextbeer.google.places.Place
+import spock.lang.Specification
+import spock.lang.Shared
 
-class GooglePlacesFacadeTest {
+class GooglePlacesFacadeSpec extends Specification {
     private static final String WARSAW_CENTER_LATITUDE = "52.233418"
     private static final String WARSAW_CENTER_LONGITUDE = "21.019419"
-    GooglePlacesFacade googlePlacesFacade
+    @Shared GooglePlacesFacade googlePlacesFacade = createGooglePlacesFacadeWithGoogleApiKey()
 
-    @Before
-    void createGooglePlacesFacadeWithGoogleApiKey() {
+    GooglePlacesFacade createGooglePlacesFacadeWithGoogleApiKey() {
         Properties properties = new Properties()
         properties.load(new FileReader(new File("grails-app/conf/external-config.properties")))
         String googleApiKey = properties.get("google.places.api.key")
-        googlePlacesFacade = new GooglePlacesFacade(googleApiKey)
+        return new GooglePlacesFacade(googleApiKey)
     }
 
-    @Test
-    void shouldGetPlacesInVicinity() {
-        //when
+    def "get places in vicinity"() {
+        when:
         Collection<Place> places = googlePlacesFacade.getInVicinity(WARSAW_CENTER_LATITUDE, WARSAW_CENTER_LONGITUDE, 3000)
 
-        //then
-        assert places != null
-        assert places.size() > 0
+        then:
+        places != null
+        places.size() > 0
     }
-    
-    @Test
-    void shouldGetPlaceDetailsAsynchronously() {
-        //given
+
+    def "get details for places asynchronously"() {
+        given:
         Collection<Place> places = googlePlacesFacade.getInVicinity(WARSAW_CENTER_LATITUDE, WARSAW_CENTER_LONGITUDE, 3000)
-        
-        //when
+
+        when:
         List<PlaceDetails> detailsOfPlaces = googlePlacesFacade.getDetailsAsync(places.collect {it.reference})
 
-        //then
-        assert detailsOfPlaces != null
-        assert detailsOfPlaces.size() == places.size()
+        then:
+        detailsOfPlaces != null
+        detailsOfPlaces.size() == places.size()
     }
+
 }

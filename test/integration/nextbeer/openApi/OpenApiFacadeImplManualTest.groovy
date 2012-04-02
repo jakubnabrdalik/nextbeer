@@ -4,7 +4,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 
-class OpenApiFacadeImplTest {
+class OpenApiFacadeImplManualTest {
     OpenApiFacadeImpl openApiFacadeImpl
     String testNumber
 

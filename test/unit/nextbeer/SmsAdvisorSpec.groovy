@@ -2,12 +2,13 @@
 package nextbeer
 
 import nextbeer.google.GooglePlacesFacade
+import nextbeer.google.details.PlaceDetails
+import nextbeer.google.places.Place
 import nextbeer.openApi.Location
 import nextbeer.openApi.OpenApiFacade
-import nextbeer.google.places.Place
-import nextbeer.google.details.PlaceDetails
+import spock.lang.Specification
 
-class SmsAdvisorSpec extends spock.lang.Specification {
+class SmsAdvisorSpec extends Specification {
     static final String phoneNumber = "7623657847"
     static final int rangeInMeters = 3000
     static final String latitude = "52.233418"
@@ -25,7 +26,7 @@ class SmsAdvisorSpec extends spock.lang.Specification {
         openApiFacade.getLocation(phoneNumber) >> new Location(latitude: latitude, longitude: longitude)
     }
 
-    def "should send sms with proposals for current location"() {
+    def "send sms with proposals for current location"() {
         given:
         googleGivesUsPlaces()
 
@@ -46,7 +47,7 @@ class SmsAdvisorSpec extends spock.lang.Specification {
                  new PlaceDetails(place2Properties.clone() << [phone: "+48 22 621 35 06"])]
     }
 
-    def "should send we`re sorry sms when no places found"() {
+    def "send we`re sorry sms when no places found"() {
         given:
         googleGivesUsNothing()
 
