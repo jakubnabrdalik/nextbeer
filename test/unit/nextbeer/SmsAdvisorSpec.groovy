@@ -34,8 +34,8 @@ class SmsAdvisorSpec extends Specification {
         smsAdvisor.sendSmsWithProposalsForCurrentLocation(phoneNumber, rangeInMeters)
 
         then:
-        1 * openApiFacade.sendSms(phoneNumber, URLEncoder.encode("Drink-bar, Wspólna 52/54, Warsaw, +48 22 629 26 25\n" +
-                                                                 "Pepper Pub & Restaurant, Wilcza 35/41, Warsaw, +48 22 621 35 06"))
+        1 * openApiFacade.sendSms(phoneNumber, "Drink-bar, Wspólna 52/54, Warsaw, +48 22 629 26 25; " +
+                                                "Pepper Pub & Restaurant, Wilcza 35/41, Warsaw, +48 22 621 35 06")
     }
 
     private void googleGivesUsPlaces() {

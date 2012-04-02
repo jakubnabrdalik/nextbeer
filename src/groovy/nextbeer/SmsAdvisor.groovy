@@ -22,8 +22,8 @@ class SmsAdvisor {
             openApiFacade.sendSms(phoneNumber, "Przykro mi, ale w Twoim pobliżu google nie znalazło żadnej knajpy :(")
         } else {
             List<PlaceDetails> placesWithDetails = googlePlacesFacade.getDetailsAsync(places.collect {it.reference})
-            String smsText = placesWithDetails.collect {it.name + ", " + it.vicinity + ", " + it.phone}.join("\n")
-            openApiFacade.sendSms(phoneNumber, URLEncoder.encode(smsText))
+            String smsText = placesWithDetails.collect {it.name + ", " + it.vicinity + ", " + it.phone}.join("; ")
+            openApiFacade.sendSms(phoneNumber, smsText)
         }
     }
 }

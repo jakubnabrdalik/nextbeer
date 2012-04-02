@@ -320,9 +320,8 @@ Aplikacja ta raczej nie zarobi dla nas kokosów, biorąc pod uwagę jak mało mi
 
 Co należałoby dodać/poprawić?
 
-Nie obsłużyliśmy sytuacji, gdy ilość adresów do wysłania będzie przekraczała wielkość pojedynczego sms'a, a w centrum miasta to sytuacja gwarantowana.
 
-Treść sms'a wysyłamy GET'em, kodując dane zgodnie z zasadami kodowania URLi, ale niestety na dzień dzisiejszy OpenApi nie odkodowywuje tego z powrotem, powodując, że w sms'ie przychodzą "dziwne znaczki". Być może w wersji oficjalnej pojawią się zmiany i albo będziemy mogli używać POST'a, albo nastąpi odkodowywanie GET'a.
+Moglibyśmy odbierać położenie (location) przy pomocy zdefiniowanego callbacku, zamiast niepotrzebnie czekać zawieszając wątek. Dla aplikacji obsługującej normalny ruch, byłoby to niezbędne, choć dla tego przykładu wystarczy synchroniczne zapytanie o lokalizację.
 
 Moglibyśmy poza tym pobrać informacje o modelu komórki, z której przyszedł sms, i dostosować do niej odpowiedź. Dla komórek posiadających przeglądarkę, choćby ubogą, można wysłać adres strony WWW poszczególnych miejsc lub zdjęcie z niej pobrane. Moglibyśmy się też pokusić o parsowanie stron i wyszukiwanie informacji o godzinach otwarcia (niestety Google Places jej nie ma, a puby nie zawsze je zamieszczają na stronach). Moglibyśmy również wyeliminować miejsca, które nie pasują do naszego profilu (pijalnia czekolady?).
 

@@ -24,6 +24,6 @@ class LoggingAspect {
 
     @AfterThrowing(pointcut = "Pointcuts.allOpenApiMethodsExceptMetaClassCalls()", throwing = "exception")
     public void debugtHttpCommunicationErrors(JoinPoint joinPoint, HttpResponseException exception) {
-        log.debug("HttpResponseException detected; Status: $exception.response.status Response: $exception.response")
+        log.debug("HttpResponseException detected; Status: $exception.response.status Response: $exception.response.data")
     }
 }
